@@ -218,6 +218,8 @@ export class RNG {
 
     /**
      * Returns a new array with the items shuffled randomly.
+     *
+     * Does not modify the original array.
      */
     shuffle<T>(
         arr: T[],
@@ -228,6 +230,8 @@ export class RNG {
 
     /**
      * Similar to select but removes the selected item from the array.
+     *
+     * DOES modify the original array.
      */
     pluck<T>(
         arr: T[],
