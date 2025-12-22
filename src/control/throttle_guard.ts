@@ -7,7 +7,7 @@ export class ThrottleGuard {
         this.delay = delay;
     }
 
-    run(fn: () => void): void {
+    run(fn: () => void, force = false): Promise<void> {
         const now = Date.now();
         const delta = now - this.lastTime;
 
@@ -16,15 +16,25 @@ export class ThrottleGuard {
             this.timeout = null;
         }
 
-        if (delta >= this.delay) {
+        if (force || delta >= this.delay) {
             this.lastTime = now;
-            fn();
-            return;
+            const ret: any = fn();
+            if (ret instanceof Promise) {
+                return ret;
+            }
+            return Promise.resolve();
         }
-        this.timeout = setTimeout(() => {
-            this.timeout = null;
-            this.lastTime = Date.now();
-            fn();
-        }, this.delay - delta);
+        return new Promise((resolve) => {
+            this.timeout = setTimeout(() => {
+                this.timeout = null;
+                this.lastTime = Date.now();
+                const ret: any = fn();
+                if (ret instanceof Promise) {
+                    ret.then(() => resolve());
+                } else {
+                    resolve();
+                }
+            }, this.delay - delta);
+        });
     }
 }
