@@ -183,7 +183,8 @@ export class RNG {
         while (rest.length > 0 && count > 0) {
             const index = this.selectIndex(rest, weightKey);
             const el = rest[index];
-            rest[index] = rest.pop()!;
+            rest[index] = rest[rest.length - 1];
+            rest.pop();
             copy.push(el);
             count--;
         }
